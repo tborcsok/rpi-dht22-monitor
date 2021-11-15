@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 import time
+from datetime import datetime
 import board
 import adafruit_dht
 
@@ -17,11 +18,14 @@ while True:
     try:
         # Print the values to the serial port
         temperature_c = dhtDevice.temperature
-        temperature_f = temperature_c * (9 / 5) + 32
         humidity = dhtDevice.humidity
+        now = datetime.utcnow()
+        with open('./data/test_log.csv', 'a+') as f:
+            f.write(f'{now.strftime("%Y-%m-%dT%H:%M:%S")},{temperature_c},{humidity}\n')
+
         print(
-            "Temp: {:.1f} F / {:.1f} C    Humidity: {}% ".format(
-                temperature_f, temperature_c, humidity
+            "Temp: {:.1f} C    Humidity: {}% ".format(
+                temperature_c, humidity
             )
         )
 
@@ -34,5 +38,5 @@ while True:
         dhtDevice.exit()
         raise error
 
-    time.sleep(2.0)
+    time.sleep(15.0)
 
