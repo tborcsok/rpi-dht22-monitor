@@ -36,7 +36,7 @@ if __name__=='__main__':
     started = datetime.utcnow()
 
     logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(message)s',
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         handlers=[logging.FileHandler(root/'logs'/f'schedule_{started.date().isoformat()}.log'),
                                   logging.StreamHandler()])
 
