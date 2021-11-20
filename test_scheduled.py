@@ -21,7 +21,7 @@ def read_write_data():
         now = datetime.utcnow()
     except RuntimeError as error:
         # Errors happen fairly often, DHT's are hard to read, just keep going
-        print(error.args[0])
+        logging.error(error.args[0], exc_info=True)
         raise error
     except Exception as error:
         raise error
@@ -30,7 +30,7 @@ def read_write_data():
         with open(root/'data'/f'test_log_{now.date().isoformat()}.csv', 'a+') as f:
             f.write(f'{now.strftime("%Y-%m-%dT%H:%M:%S")},{temperature_c},{humidity}\n')
     except:
-        pass
+        logging.error('Error during saving results to file', exc_info=True)
 
 if __name__=='__main__':
     started = datetime.utcnow()
@@ -40,6 +40,10 @@ if __name__=='__main__':
                         handlers=[logging.FileHandler(root/'logs'/f'schedule_{started.date().isoformat()}.log'),
                                   logging.StreamHandler()])
 
-    read_write_data()
-    dhtDevice.exit()
-    logging.info(f'Finished {datetime.utcnow() - started}')
+    try:
+        read_write_data()
+    except:
+        raise
+    finally:
+        dhtDevice.exit()
+        logging.info(f'Finished {datetime.utcnow() - started}')
