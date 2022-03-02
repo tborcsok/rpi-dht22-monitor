@@ -1,36 +1,13 @@
-
-import time
 from datetime import datetime
 import board
 import adafruit_dht
-from tenacity import retry, stop_after_attempt, wait_fixed
 from pathlib import Path
 import logging
 
-# Initial the dht device, with data pin connected to:
-dhtDevice = adafruit_dht.DHT22(board.D22)
+from src import read_write_data
+
 
 root = Path(__file__).parent
-
-@retry(stop=stop_after_attempt(5), wait=wait_fixed(2))
-def read_write_data():
-    try:
-        # Print the values to the serial port
-        temperature_c = dhtDevice.temperature
-        humidity = dhtDevice.humidity
-        now = datetime.utcnow()
-    except RuntimeError as error:
-        # Errors happen fairly often, DHT's are hard to read, just keep going
-        logging.error(error.args[0], exc_info=True)
-        raise error
-    except Exception as error:
-        raise error
-
-    try:
-        with open(root/'data'/f'test_log_{now.date().isoformat()}.csv', 'a+') as f:
-            f.write(f'{now.strftime("%Y-%m-%dT%H:%M:%S")},{temperature_c},{humidity}\n')
-    except:
-        logging.error('Error during saving results to file', exc_info=True)
 
 if __name__=='__main__':
     started = datetime.utcnow()
@@ -40,8 +17,11 @@ if __name__=='__main__':
                         handlers=[logging.FileHandler(root/'logs'/f'schedule_{started.date().isoformat()}.log'),
                                   logging.StreamHandler()])
 
+
+    dhtDevice = adafruit_dht.DHT22(board.D22)
+
     try:
-        read_write_data()
+        read_write_data(dhtDevice=dhtDevice, root_folder=root, dev=False)
     except:
         raise
     finally:
