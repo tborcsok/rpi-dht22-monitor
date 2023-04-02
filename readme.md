@@ -10,7 +10,7 @@ This script assumes that the sensor is connected to the D22 pin of the Raspberry
 
 ## How to run
 
-The entrypoint to the data collection is `test_scheduled.py`. The Python environment is defined by `requirements.txt` and Python version is found in `version.txt`. The environment is compatible with my Raspberry Pi 3 Model B running Raspbian 10.
+The entrypoint to the data collection is `make_measurements.py`. The Python environment is defined by `requirements.txt` and Python version is found in `version.txt`. The environment is compatible with my Raspberry Pi 3 Model B running Raspbian 11 64bit.
 
 The CircuitPython package requires that you instal `libgpiod2` with apt.
 
